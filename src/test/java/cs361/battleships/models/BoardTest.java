@@ -10,6 +10,7 @@ public class BoardTest {
     @Test
     public void testInvalidPlacement()
     {
+        //Initialize the board
         Board board = new Board();          //Player board
         Board board_a = new Board();        //Enemy board
 
@@ -21,7 +22,6 @@ public class BoardTest {
         assertFalse(board_a.placeShip(new Ship("BATTLESHIP"), 0, 'J', false, false));
         assertFalse(board_a.placeShip(new Ship("DESTROYER"), 0, 'I', false, false));
         assertFalse(board_a.placeShip(new Ship("SUBMARINE"), 0, 'J', true, true));
-
         //---------------------------------------------------------------------------------------------
 
         //enemy board correct setting------------------------------------------------------------------
@@ -82,6 +82,8 @@ public class BoardTest {
         assertTrue(board.attack(7,'I').getResult() == AtackStatus.MISS);
         assertTrue(board_a.attack(5,'I').getResult() == AtackStatus.MISS);
         assertTrue(board.attack(8,'B').getResult() == AtackStatus.MISS);
+        assertTrue(board_a.attack(9,'C').getResult() == AtackStatus.MISS);
+        assertTrue(board.attack(3,'A').getResult() == AtackStatus.MISS);
 
         //player hit ship of enemy
         assertTrue(board_a.attack(2,'B').getResult() == AtackStatus.HIT);
@@ -95,6 +97,9 @@ public class BoardTest {
 
         //player hit one captain quarter of enemy's ship
         assertTrue(board_a.attack(7,'D').getResult() == AtackStatus.CAPTAIN);
+        assertTrue(board_a.attack(6,'D').getResult() == AtackStatus.HIT);
+        assertTrue(board_a.attack(5,'D').getResult() == AtackStatus.HIT);
+        assertTrue(board_a.attack(4,'D').getResult() == AtackStatus.HIT);
         assertTrue(board.attack(6,'D').getResult() == AtackStatus.CAPTAIN);
         //player sunk one enemy'ship by only hitting twice captain quarter
         assertTrue(board_a.attack(7,'D').getResult() == AtackStatus.SUNK);
@@ -110,14 +115,22 @@ public class BoardTest {
         assertTrue(board.attack(4,'H').getResult() == AtackStatus.MISS);
 
 
-        //This is last ship of enemy being hit by player. Game over
-        //assertTrue(board_a.attack(7,'H').getResult() == AtackStatus.SURRENDER);
+        //Hit the battle but can't hit the submarine since
+        assertTrue(board_a.attack(7,'H').getResult() == AtackStatus.SUNK);
 
+        //Test the game object
         Game test = new Game();
-        test.placeShip(new Ship("MINESWEEPER"), 2, 'D', false, false);
-        test.placeShip(new Ship("DESTROYER"), 5, 'D', false, false);
-        test.placeShip(new Ship("BATTLESHIP"), 7, 'D', false, false);
-        test.placeShip(new Ship("SUBMARINE"), 8, 'F', false, false);
+        assertTrue(test.placeShip(new Ship("MINESWEEPER"), 1, 'D', false, false));
+        assertTrue(test.placeShip(new Ship("DESTROYER"), 4, 'D', false, false));
+        //Test if could overlap
+        assertFalse(test.placeShip(new Ship("BATTLESHIP"), 4, 'D', false, false));
+        assertTrue(test.placeShip(new Ship("BATTLESHIP"), 3, 'D', false, false));
+        //Test the submerged mode
+        assertFalse(test.placeShip(new Ship("SUBMARINE"), 3, 'D', false, false));
+        assertTrue(test.placeShip(new Ship("SUBMARINE"), 3, 'D', false, true));
+
+        //The game should have ability to fire
+        assertTrue(test.attack(1, 'A'));
 
         //If player trying to move the fleet before sunk two opponent's ship
         assertFalse(test.moveFleet(1));
