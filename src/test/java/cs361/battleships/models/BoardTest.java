@@ -10,6 +10,7 @@ public class BoardTest {
     @Test
     public void testInvalidPlacement()
     {
+        //Initialize the board
         Board board = new Board();          //Player board
         Board board_a = new Board();        //Enemy board
 
@@ -21,7 +22,6 @@ public class BoardTest {
         assertFalse(board_a.placeShip(new Ship("BATTLESHIP"), 0, 'J', false, false));
         assertFalse(board_a.placeShip(new Ship("DESTROYER"), 0, 'I', false, false));
         assertFalse(board_a.placeShip(new Ship("SUBMARINE"), 0, 'J', true, true));
-
         //---------------------------------------------------------------------------------------------
 
         //enemy board correct setting------------------------------------------------------------------
@@ -82,6 +82,8 @@ public class BoardTest {
         assertTrue(board.attack(7,'I').getResult() == AtackStatus.MISS);
         assertTrue(board_a.attack(5,'I').getResult() == AtackStatus.MISS);
         assertTrue(board.attack(8,'B').getResult() == AtackStatus.MISS);
+        assertTrue(board_a.attack(9,'C').getResult() == AtackStatus.MISS);
+        assertTrue(board.attack(3,'A').getResult() == AtackStatus.MISS);
 
         //player hit ship of enemy
         assertTrue(board_a.attack(2,'B').getResult() == AtackStatus.HIT);
@@ -95,6 +97,9 @@ public class BoardTest {
 
         //player hit one captain quarter of enemy's ship
         assertTrue(board_a.attack(7,'D').getResult() == AtackStatus.CAPTAIN);
+        assertTrue(board_a.attack(6,'D').getResult() == AtackStatus.HIT);
+        assertTrue(board_a.attack(5,'D').getResult() == AtackStatus.HIT);
+        assertTrue(board_a.attack(4,'D').getResult() == AtackStatus.HIT);
         assertTrue(board.attack(6,'D').getResult() == AtackStatus.CAPTAIN);
         //player sunk one enemy'ship by only hitting twice captain quarter
         assertTrue(board_a.attack(7,'D').getResult() == AtackStatus.SUNK);
@@ -110,19 +115,95 @@ public class BoardTest {
         assertTrue(board.attack(4,'H').getResult() == AtackStatus.MISS);
 
 
-        //This is last ship of enemy being hit by player. Game over
-        //assertTrue(board_a.attack(7,'H').getResult() == AtackStatus.SURRENDER);
+        //Hit the battle but can't hit the submarine since
+        assertTrue(board_a.attack(7,'H').getResult() == AtackStatus.SUNK);
 
+
+
+        //Test the game object
         Game test = new Game();
-        test.placeShip(new Ship("MINESWEEPER"), 2, 'D', false, false);
-        test.placeShip(new Ship("DESTROYER"), 5, 'D', false, false);
-        test.placeShip(new Ship("BATTLESHIP"), 7, 'D', false, false);
-        test.placeShip(new Ship("SUBMARINE"), 8, 'F', false, false);
+        assertTrue(test.placeShip(new Ship("MINESWEEPER"), 1, 'D', false, false));
+        assertTrue(test.placeShip(new Ship("DESTROYER"), 4, 'D', false, false));
+        //Test if could overlap
+        assertFalse(test.placeShip(new Ship("BATTLESHIP"), 4, 'D', false, false));
+        assertTrue(test.placeShip(new Ship("BATTLESHIP"), 3, 'D', false, false));
+        //Test the submerged mode
+        assertFalse(test.placeShip(new Ship("SUBMARINE"), 3, 'D', false, false));
+        assertTrue(test.placeShip(new Ship("SUBMARINE"), 3, 'D', false, true));
+
+        //The game should have ability to fire, and the coordinate should be valid
+        for(int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+            {
+                assertTrue(test.attack(i+1, (char)(65+j)));
+            }
+        }
+        assertFalse(test.attack(-1, 'A'));
+        assertFalse(test.attack(0, 'A'));
+        assertFalse(test.attack(11, 'J'));
+        assertFalse(test.attack(11, 'K'));
 
         //If player trying to move the fleet before sunk two opponent's ship
         assertFalse(test.moveFleet(1));
 
+        //Test the ship
+        Ship min = new Ship("MINESWEEPER");
+        Ship des = new Ship("DESTROYER");
+        Ship bat = new Ship("BATTLESHIP");
+        Ship sub = new Ship("SUBMARINE");
 
+        //Test the allocate
+        assertTrue(min.returnHp() == 2);
+        assertTrue(des.returnHp() == 3);
+        assertTrue(bat.returnHp() == 4);
+        assertTrue(sub.returnHp() == 5);
+
+        assertTrue(min.returnCHp() == 1);
+        assertTrue(des.returnCHp() == 2);
+        assertTrue(bat.returnCHp() == 2);
+        assertTrue(sub.returnCHp() == 2);
+
+        assertTrue(min.isSunk() == false);
+        assertTrue(des.isSunk() == false);
+        assertTrue(bat.isSunk() == false);
+        assertTrue(sub.isSunk() == false);
+
+        //Test place ship
+        bat.setCoordinates(1,'A', false, false);
+
+        assertTrue(bat.getOccupiedSquares().get(0).getRow() == 1 && bat.getOccupiedSquares().get(0).getColumn() == 'A');
+        assertTrue(bat.isSubmerged() == false);
+        assertTrue(bat.getOccupiedSquares().get(3).getRow() == 1 && bat.getOccupiedSquares().get(3).getColumn() == 'D');
+
+        //Test move the ship
+        bat.move(1);
+        assertTrue(bat.getOccupiedSquares().get(0).getRow() == 1 && bat.getOccupiedSquares().get(0).getColumn() == 'A');
+        assertTrue(bat.isSubmerged() == false);
+        assertTrue(bat.getOccupiedSquares().get(3).getRow() == 1 && bat.getOccupiedSquares().get(3).getColumn() == 'D');
+
+        bat.move(3);
+        assertTrue(bat.getOccupiedSquares().get(0).getRow() == 2 && bat.getOccupiedSquares().get(0).getColumn() == 'A');
+        assertTrue(bat.isSubmerged() == false);
+        assertTrue(bat.getOccupiedSquares().get(3).getRow() == 2 && bat.getOccupiedSquares().get(3).getColumn() == 'D');
+
+        bat.move(2);
+        assertTrue(bat.getOccupiedSquares().get(0).getRow() == 2 && bat.getOccupiedSquares().get(0).getColumn() == 'B');
+        assertTrue(bat.isSubmerged() == false);
+        assertTrue(bat.getOccupiedSquares().get(3).getRow() == 2 && bat.getOccupiedSquares().get(3).getColumn() == 'E');
+
+        bat.move(4);
+        assertTrue(bat.getOccupiedSquares().get(0).getRow() == 2 && bat.getOccupiedSquares().get(0).getColumn() == 'A');
+        assertTrue(bat.isSubmerged() == false);
+        assertTrue(bat.getOccupiedSquares().get(3).getRow() == 2 && bat.getOccupiedSquares().get(3).getColumn() == 'D');
+
+        bat.move(1);
+        assertTrue(bat.getOccupiedSquares().get(0).getRow() == 1 && bat.getOccupiedSquares().get(0).getColumn() == 'A');
+        assertTrue(bat.isSubmerged() == false);
+        assertTrue(bat.getOccupiedSquares().get(3).getRow() == 1 && bat.getOccupiedSquares().get(3).getColumn() == 'D');
+
+        bat.shipSunk();
+        assertTrue(bat.isSunk());
     }
 
 }
