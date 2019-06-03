@@ -13,7 +13,7 @@ public class BoardTest {
         //Initialize the board
         Board board = new Board();          //Player board
         Board board_a = new Board();        //Enemy board
-
+      
         //enemy board error setting --------------------------------------------------------------------
         assertFalse(board_a.placeShip(new Ship("MINESWEEPER"), 10, 'J', true, false));     //To check if the place ship will throw error if in invalid position
         assertFalse(board_a.placeShip(new Ship("BATTLESHIP"), 10, 'J', true, false));
@@ -59,6 +59,27 @@ public class BoardTest {
         assertFalse(board.placeShip(new Ship("MINESWEEPER"), 7, 'H', false, false));
         assertTrue(board.placeShip(new Ship("DESTROYER"), 4, 'H', false, false));
         //----------------------------------------------------------------------------------------------
+
+        int i;
+            for(i = 1; i <11; i++) {   //row index 1-10
+                assertFalse(board.placeShip(new Ship("MINESWEEPER"), i, 'J', false, false));
+                assertFalse(board.placeShip(new Ship("BATTLESHIP"), i, 'J', false, false));
+                assertFalse(board.placeShip(new Ship("DESTROYER"), i, 'J', false, false));
+                assertFalse(board.placeShip(new Ship("SUBMARINE"), i, 'J', false, false));
+            }
+
+            for(char j = 'A';j<'K'; j++ ){
+                assertFalse(board.placeShip(new Ship("MINESWEEPER"), 10, j, true, false));
+                assertFalse(board.placeShip(new Ship("DESTROYER"), 9, j, true, false));
+                assertFalse(board.placeShip(new Ship("BATTLESHIP"), 8, j, true, false));
+                assertFalse(board.placeShip(new Ship("SUBMARINE"), 8, j, true, false));
+            }
+
+            //Valid placement
+            assertTrue(board.placeShip(new Ship("MINESWEEPER"), 6, 'A', false, false));
+            assertTrue(board.placeShip(new Ship("DESTROYER"), 3, 'C', true, false));
+            assertTrue(board.placeShip(new Ship("BATTLESHIP"), 5, 'I', true, false));
+            assertTrue(board.placeShip(new Ship("SUBMARINE"), 7, 'E', false, false));
 
         //Check if the ship could move collapse
         boolean[] result = board_a.move(1);
@@ -118,8 +139,6 @@ public class BoardTest {
         //Hit the battle but can't hit the submarine since
         assertTrue(board_a.attack(7,'H').getResult() == AtackStatus.SUNK);
 
-
-
         //Test the game object
         Game test = new Game();
         assertTrue(test.placeShip(new Ship("MINESWEEPER"), 1, 'D', false, false));
@@ -143,6 +162,9 @@ public class BoardTest {
         assertFalse(test.attack(0, 'A'));
         assertFalse(test.attack(11, 'J'));
         assertFalse(test.attack(11, 'K'));
+
+        //The game should have ability to fire
+        assertTrue(test.attack(1, 'A'));
 
         //If player trying to move the fleet before sunk two opponent's ship
         assertFalse(test.moveFleet(1));
