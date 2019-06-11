@@ -76,10 +76,12 @@ public class BoardTest {
             }
 
             //Valid placement
+        /*
             assertTrue(board.placeShip(new Ship("MINESWEEPER"), 6, 'A', false, false));
             assertTrue(board.placeShip(new Ship("DESTROYER"), 3, 'C', true, false));
             assertTrue(board.placeShip(new Ship("BATTLESHIP"), 5, 'I', true, false));
             assertTrue(board.placeShip(new Ship("SUBMARINE"), 7, 'E', false, false));
+        */
 
         //Check if the ship could move collapse
         boolean[] result = board_a.move(1);
@@ -151,7 +153,7 @@ public class BoardTest {
         assertTrue(test.placeShip(new Ship("SUBMARINE"), 3, 'D', false, true));
 
         //The game should have ability to fire, and the coordinate should be valid
-        for(int i = 0; i < 10; i++)
+        for(i = 0; i < 10; i++)
         {
             for(int j = 0; j < 10; j++)
             {
