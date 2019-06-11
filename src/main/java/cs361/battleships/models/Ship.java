@@ -37,6 +37,41 @@ public class Ship
 		this.col = 'A';
 	}
 
+	private void initMine()
+	{
+		this.sunk = false;
+		this.s_size=2;
+		this.hp = 2;
+		this.c_hp = 1;
+		this.submerged = false;
+	}
+
+	private void initDes()
+	{
+		this.sunk = false;
+		this.s_size=3;
+		this.hp = 3;
+		this.c_hp = 2;
+		this.submerged = false;
+	}
+
+	private void initBat()
+	{
+		this.sunk = false;
+		this.s_size=4;
+		this.hp = 4;
+		this.c_hp = 2;
+		this.submerged = false;
+	}
+
+	private void initSub()
+	{
+		this.sunk = false;
+		this.s_size=5;
+		this.hp = 5;
+		this.c_hp = 2;
+	}
+
 	//This function is used to set the ship's type
 	public Ship(String kind)
 	{
@@ -44,180 +79,227 @@ public class Ship
 		this.captainSquares = new ArrayList<>();
 		this.ship_type = kind;		//Set the type of ship
 		if(this.ship_type.equals("MINESWEEPER")){
-			this.sunk = false;
-			this.s_size=2;
-			this.hp = 2;
-			this.c_hp = 1;
-			this.submerged = false;
+			initMine();
 		}
 		else if(this.ship_type.equals("DESTROYER")){
-			this.sunk = false;
-			this.s_size=3;
-			this.hp = 3;
-			this.c_hp = 2;
-			this.submerged = false;
+			initDes();
 		}
 		else if(this.ship_type.equals("BATTLESHIP")){
-			this.sunk = false;
-			this.s_size=4;
-			this.hp = 4;
-			this.c_hp = 2;
-			this.submerged = false;
+			initBat();
 		}
 		else if(this.ship_type.equals("SUBMARINE")){
-			this.sunk = false;
-			this.s_size=5;
-			this.hp = 5;
-			this.c_hp = 2;
+			initSub();
 		}
+	}
+
+	private void setMine(int row, char col, boolean isVerticle)
+	{
+		Square newsquare;
+		Square caps;
+
+		this.s_size = 2;
+		this.row = row;
+		this.col = col;
+
+		for(int i = 0; i < 2; i++)
+		{
+			if(i == 0){
+				if(isVerticle)
+					caps = new Square((row + i), col);
+				else
+					caps = new Square(row, (char)((int)(col)+i));
+				this.captainSquares.add(caps);
+			}
+			if(isVerticle)
+				newsquare = new Square((row + i), col);
+			else
+				newsquare = new Square(row, (char)((int)(col) + i));
+			this.occupiedSquares.add(i, newsquare);
+		}
+	}
+
+	private void setDes(int row, char col, boolean isVerticle)
+	{
+		Square newsquare;
+		Square caps;
+
+		this.s_size = 3;
+		if(isVerticle)
+		{
+			this.row = row+1;
+			this.col = col;
+		}
+		else {
+			this.row = row;
+			this.col = (char)((int)(col)+1);
+		}
+
+		for(int i = 0; i < 3; i++)
+		{
+			if(i == 1){
+				if(isVerticle)
+					caps = new Square((row + i), col);
+				else
+					caps = new Square(row, (char)((int) (col)+ i));
+				this.captainSquares.add(caps);
+			}
+			if(isVerticle)
+				newsquare = new Square((row + i), col);
+			else
+				newsquare = new Square(row, (char)((int)(col) + i));
+			this.occupiedSquares.add(i, newsquare);
+		}
+	}
+
+	private void setBat(int row, char col, boolean isVerticle)
+	{
+		Square newsquare;
+		Square caps;
+
+		this.s_size = 4;
+		if(isVerticle) {
+			this.row = row+2;
+			this.col = col;
+		}
+		else {
+			this.row = row;
+			this.col = (char)((int)(col)+2);
+		}
+
+
+		for(int i = 0; i < 4; i++)
+		{
+			if(i == 2){
+				if(isVerticle)
+					caps = new Square((row + i), col);
+				else
+					caps = new Square(row, (char)((int) (col)+ i));
+				this.captainSquares.add(caps);
+			}
+			if(isVerticle)
+				newsquare = new Square((row + i), col);
+			else
+				newsquare = new Square(row, (char)((int)(col) + i));
+			this.occupiedSquares.add(i, newsquare);
+		}
+	}
+
+	private void setSub(int row, char col, boolean isVerticle)
+	{
+		Square newsquare;
+		Square caps;
+
+		this.s_size = 5;
+		if(isVerticle) {
+			this.row = row + 3;
+			this.col = col;
+		}
+		else {
+			this.row = row;
+			this.col = (char)((int)(col)+3);
+		}
+
+		for(int i = 0; i < 4; i++)
+		{
+			if(i == 3){
+				if(isVerticle)
+					caps = new Square((row + i), col);
+				else
+					caps = new Square(row, (char)((int) (col)+ i));
+				this.captainSquares.add(caps);
+			}
+			if(isVerticle)
+				newsquare = new Square((row + i), col);
+			else
+				newsquare = new Square(row, (char)((int)(col) + i));
+			this.occupiedSquares.add(i, newsquare);
+		}
+		if(isVerticle)
+			newsquare = new Square((row + 2), (char)((int)(col) + 1));
+		else
+			newsquare = new Square(row-1, (char)((int)(col) + 2));
+		this.occupiedSquares.add(4, newsquare);
 	}
 
 	//This function used to set the coordinates of the ship.
 	public void setCoordinates(int row, char col, boolean isVerticle, boolean isSubmerged)
 	{
-		Square newsquare;
-		Square caps;
 		if(this.ship_type.equals("SUBMARINE")){
 			submerged = isSubmerged;
 		}
-		if(isVerticle)
+
+		if(this.ship_type.equals("MINESWEEPER"))
 		{
-			if(this.ship_type.equals("MINESWEEPER"))
-			{
-				this.s_size = 2;
-				this.row = row;
-				this.col = col;
-
-				for(int i = 0; i < 2; i++)
-				{
-					if(i == 0){
-						caps = new Square((row + i), col);
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square((row + i), col);
-					this.occupiedSquares.add(i, newsquare);
-				}
-			}
-			else if(ship_type.equals("DESTROYER") )
-			{
-				this.s_size = 3;
-				this.row = row+1;
-				this.col = col;
-
-				for(int i = 0; i < 3; i++)
-				{
-					if(i == 1){
-						caps = new Square((row + i), col);
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square((row + i), col);
-					this.occupiedSquares.add(i, newsquare);
-				}
-			}
-			else if(ship_type.equals("BATTLESHIP"))
-			{
-				this.s_size = 4;
-				this.row = row+2;
-				this.col = col;
-
-				for(int i = 0; i < 4; i++)
-				{
-					if(i == 2){
-						caps = new Square((row + i), col);
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square((row + i), col);
-					this.occupiedSquares.add(i, newsquare);
-				}
-			}
-			else if(ship_type.equals("SUBMARINE"))
-			{
-				this.s_size = 5;
-				this.row = row+3;
-				this.col = col;
-
-				for(int i = 0; i < 4; i++)
-				{
-					if(i == 3){
-						caps = new Square((row + i), col);
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square((row + i), col);
-					this.occupiedSquares.add(i, newsquare);
-				}
-				newsquare = new Square((row + 2), (char)((int)(col) + 1));
-				this.occupiedSquares.add(4, newsquare);
-			}
+			setMine(row, col, isVerticle);
 		}
-		else
+		else if(ship_type.equals("DESTROYER") )
 		{
-			if(this.ship_type.equals("MINESWEEPER"))
-			{
-				this.s_size = 2;
-				this.row = row;
-				this.col = col;
-
-				for(int i = 0; i < 2; i++)
-				{
-					if(i == 0){
-						caps = new Square(row, (char)((int)(col)+i));
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square(row, (char)((int)(col) + i));
-					this.occupiedSquares.add(i, newsquare);
-				}
-			}
-			else if(this.ship_type.equals("DESTROYER"))
-			{
-				this.s_size = 3;
-				this.row = row;
-				this.col = (char)((int)(col)+1);
-
-				for(int i = 0; i < 3; i++)
-				{
-					if(i == 1){
-						caps = new Square(row, (char)((int) (col)+ i));
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square(row, (char)((int)(col) + i));
-					this.occupiedSquares.add(i, newsquare);
-				}
-			}
-			else if(this.ship_type.equals("BATTLESHIP"))
-			{
-				this.s_size = 4;
-				this.row = row;
-				this.col = (char)((int)(col)+2);
-
-				for(int i = 0; i < 4; i++)
-				{
-					if(i == 2){
-						caps = new Square(row, (char)((int) (col)+ i));
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square(row, (char)((int)(col) + i));
-					this.occupiedSquares.add(i, newsquare);
-				}
-			}
-			else if(this.ship_type.equals("SUBMARINE"))
-			{
-				this.s_size = 5;
-				this.row = row;
-				this.col = (char)((int)(col)+3);
-
-				for(int i = 0; i < 4; i++)
-				{
-					if(i == 3){
-						caps = new Square(row, (char)((int) (col)+ i));
-						this.captainSquares.add(caps);
-					}
-					newsquare = new Square(row, (char)((int)(col) + i));
-					this.occupiedSquares.add(i, newsquare);
-				}
-				newsquare = new Square(row-1, (char)((int)(col) + 2));
-				this.occupiedSquares.add(4, newsquare);
-			}
+			setDes(row, col, isVerticle);
 		}
+		else if(ship_type.equals("BATTLESHIP"))
+		{
+			setBat(row, col, isVerticle);
+		}
+		else if(ship_type.equals("SUBMARINE"))
+		{
+			setSub(row, col, isVerticle);
+		}
+	}
+
+	private void stay(int direction)
+	{
+		for(int i = 0; i < this.occupiedSquares.size(); i++)		//Reset the ship
+		{
+			if(direction == 1)
+				this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()+1);
+			else if(direction == 2)
+				this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())-1));
+			else if(direction == 3)
+				this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()-1);
+			else if(direction == 4)
+				this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())+1));
+		}
+	}
+
+	private void subMove(int direction)
+	{
+		if(direction == 1)
+			this.captainSquares.get(0).setRow(this.captainSquares.get(0).getRow() - 1);
+		else if(direction == 2)
+			this.captainSquares.get(0).setColumn((char)((int)this.captainSquares.get(0).getColumn() + 1));
+		else if(direction == 3)
+			this.captainSquares.get(0).setRow(this.captainSquares.get(0).getRow() + 1);
+		else if(direction == 4)
+			this.captainSquares.get(0).setColumn((char)((int)this.captainSquares.get(0).getColumn() - 1));
+	}
+
+	private int checkDir(int direction, int check_fg, int i)
+	{
+		if(direction == 1)
+		{
+			this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()-1);
+			if(this.getOccupiedSquares().get(i).getRow() < 1)
+				check_fg = 1;
+		}
+		else if(direction == 2)
+		{
+			this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())+1));
+			if((int)this.getOccupiedSquares().get(i).getColumn()-65 > 9)
+				check_fg = 1;
+		}
+		else if(direction == 3)
+		{
+			this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()+1);
+			if(this.getOccupiedSquares().get(i).getRow() > 10)
+				check_fg = 1;
+		}
+		else if(direction == 4)
+		{
+			this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())-1));
+			if((int)this.getOccupiedSquares().get(i).getColumn()-65 < 0)
+				check_fg = 1;
+		}
+		return check_fg;
 	}
 
 	public boolean move(int direction)
@@ -227,81 +309,17 @@ public class Ship
 
 		for(int i = 0; i < this.getOccupiedSquares().size(); i++)
 		{
-			if(direction == 1)
-			{
-				this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()-1);
-				if(this.getOccupiedSquares().get(i).getRow() < 1)
-				{
-					check_fg = 1;
-				}
-			}
-			else if(direction == 2)
-			{
-				this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())+1));
-				if((int)this.getOccupiedSquares().get(i).getColumn()-65 > 9)
-				{
-					check_fg = 1;
-				}
-			}
-			else if(direction == 3)
-			{
-				this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()+1);
-				if(this.getOccupiedSquares().get(i).getRow() > 10)
-				{
-					check_fg = 1;
-				}
-			}
-			else if(direction == 4)
-			{
-				this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())-1));
-				if((int)this.getOccupiedSquares().get(i).getColumn()-65 < 0)
-				{
-					check_fg = 1;
-				}
-			}
+			check_fg = checkDir(direction, check_fg, i);
 		}
 
 		if(check_fg == 1)		//If the ship can't move
 		{
-			for(int i = 0; i < this.occupiedSquares.size(); i++)		//Reset the ship
-			{
-				if(direction == 1)
-				{
-					this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()+1);
-				}
-				else if(direction == 2)
-				{
-					this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())-1));
-				}
-				else if(direction == 3)
-				{
-					this.getOccupiedSquares().get(i).setRow(this.getOccupiedSquares().get(i).getRow()-1);
-				}
-				else if(direction == 4)
-				{
-					this.getOccupiedSquares().get(i).setColumn((char)(((int)this.getOccupiedSquares().get(i).getColumn())+1));
-				}
-			}
+			stay(direction);
 			return false;
 		}
 		else		//If the ship can move, move the captain square
 		{
-			if(direction == 1)
-			{
-				this.captainSquares.get(0).setRow(this.captainSquares.get(0).getRow() - 1);
-			}
-			else if(direction == 2)
-			{
-				this.captainSquares.get(0).setColumn((char)((int)this.captainSquares.get(0).getColumn() + 1));
-			}
-			else if(direction == 3)
-			{
-				this.captainSquares.get(0).setRow(this.captainSquares.get(0).getRow() + 1);
-			}
-			else if(direction == 4)
-			{
-				this.captainSquares.get(0).setColumn((char)((int)this.captainSquares.get(0).getColumn() - 1));
-			}
+			subMove(direction);
 			return true;
 		}
 	}
